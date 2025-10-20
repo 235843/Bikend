@@ -1,0 +1,45 @@
+package bikend.controller;
+
+import bikend.domain.BikeEntity;
+import bikend.domain.ReservationEntity;
+import bikend.domain.UserEntity;
+import bikend.service.IBikeService;
+import bikend.service.IReservationService;
+import bikend.service.IUserService;
+import bikend.utils.DTOs.ReservationDTO;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+
+@RestController
+@RequestMapping("/reservation")
+public class ReservationController {
+    private final IReservationService reservationService;
+    private final IBikeService bikeService;
+    private final IUserService userService;
+
+    public ReservationController(IReservationService reservationService, IBikeService bikeService, IUserService userService) {
+        this.reservationService = reservationService;
+        this.bikeService = bikeService;
+        this.userService = userService;
+    }
+
+    @GetMapping("/availableBikes")
+    public ResponseEntity<List<BikeEntity>> getAvailableBikes(@RequestParam(name = "start") @DateTimeFormat(pattern = "dd.MM.yyyy") Date start,
+                                                              @RequestParam(name = "end") @DateTimeFormat(pattern = "dd.MM.yyyy")Date end) {
+        return ResponseEntity.ok(reservationService.getAvailableBikes(start, end));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> create(Authentication authentication, @RequestBody ReservationDTO reservation) {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        reservationService.createReservation(reservation, user);
+
+        return ResponseEntity.ok("Sukces!");
+    }
+
+}
