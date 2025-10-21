@@ -5,7 +5,7 @@ import bikend.service.IBikeService;
 import bikend.service.IUserService;
 import bikend.utils.CodeGenerator;
 import bikend.utils.Mapper;
-import bikend.utils.DTOs.AdminUserDTO;
+import bikend.utils.dtos.AdminUserDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

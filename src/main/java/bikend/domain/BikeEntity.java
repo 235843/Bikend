@@ -18,6 +18,7 @@ public class BikeEntity {
     @Enumerated(EnumType.STRING)
     private BikeType type;
     private double pricePerDay;
+    @Column(unique = true)
     private String uniqueCode;
 
     @Override

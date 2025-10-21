@@ -3,10 +3,10 @@ package bikend.utils;
 import bikend.domain.BikeEntity;
 import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
-import bikend.utils.DTOs.AdminUserDTO;
-import bikend.utils.DTOs.BikeDTO;
-import bikend.utils.DTOs.ReservationDTO;
-import bikend.utils.DTOs.UserDTO;
+import bikend.utils.dtos.AdminUserDTO;
+import bikend.utils.dtos.BikeDTO;
+import bikend.utils.dtos.ReservationDTO;
+import bikend.utils.dtos.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;

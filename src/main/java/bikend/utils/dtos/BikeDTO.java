@@ -1,10 +1,8 @@
-package bikend.utils.DTOs;
+package bikend.utils.dtos;
 
 import bikend.utils.enums.BikeType;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Objects;
 
 @Getter
 @Setter

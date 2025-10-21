@@ -3,7 +3,7 @@ package bikend.service;
 import bikend.domain.BikeEntity;
 import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
-import bikend.utils.DTOs.ReservationDTO;
+import bikend.utils.dtos.ReservationDTO;
 
 import java.util.Date;
 import java.util.List;

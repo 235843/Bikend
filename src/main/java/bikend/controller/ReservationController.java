@@ -1,12 +1,11 @@
 package bikend.controller;
 
 import bikend.domain.BikeEntity;
-import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import bikend.service.IBikeService;
 import bikend.service.IReservationService;
 import bikend.service.IUserService;
-import bikend.utils.DTOs.ReservationDTO;
+import bikend.utils.dtos.ReservationDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

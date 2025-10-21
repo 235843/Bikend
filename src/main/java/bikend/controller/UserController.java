@@ -4,9 +4,9 @@ import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import bikend.service.IReservationService;
 import bikend.service.IUserService;
-import bikend.utils.DTOs.ReservationDTO;
+import bikend.utils.dtos.ReservationDTO;
 import bikend.utils.Mapper;
-import bikend.utils.DTOs.UserDTO;
+import bikend.utils.dtos.UserDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok(Mapper.userToDTO(userService.getUserByEmail(authentication.getName())));
     }
 
-    @PostMapping(value = "/editUser")
+    @PutMapping(value = "/editUser")
     public ResponseEntity<UserDTO> editUser(Authentication authentication,@RequestBody UserDTO userDTO) {
         UserEntity user = userService.getUserByEmail(authentication.getName());
         user.setEmail(userDTO.getEmail());

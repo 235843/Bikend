@@ -1,4 +1,4 @@
-package bikend.utils.DTOs;
+package bikend.utils.dtos;
 
 import bikend.utils.enums.UserRole;
 import lombok.Getter;

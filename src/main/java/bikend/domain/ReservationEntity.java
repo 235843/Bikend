@@ -3,6 +3,7 @@ package bikend.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,8 @@ public class ReservationEntity {
     private Date reservationStop;
     private Date createdAt;
     private Date updatedAt;
+    @ColumnDefault("false")
     private boolean paid;
+    @ColumnDefault("false")
     private boolean cancelled;
 }

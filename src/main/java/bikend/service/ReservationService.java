@@ -5,8 +5,8 @@ import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import bikend.repository.BikeRepository;
 import bikend.repository.ReservationRepository;
-import bikend.utils.DTOs.BikeDTO;
-import bikend.utils.DTOs.ReservationDTO;
+import bikend.utils.dtos.BikeDTO;
+import bikend.utils.dtos.ReservationDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,8 +46,9 @@ public class ReservationService implements IReservationService {
                 - reservation.getReservationStart().getTime(), TimeUnit.MILLISECONDS) + 1;
 
         for (BikeDTO bike : reservationDTO.getBikeList()) {
-            cost += days > 0 ? bike.getPricePerDay() * days * bike.getCount() : bike.getPricePerDay();
-            List<BikeEntity> availableBikes = getSpecificAvailableBikes(reservation.getReservationStart(), reservation.getReservationStop(), bike.getModel(), bike.getSeries());
+            cost += bike.getPricePerDay() * days * bike.getCount();
+            List<BikeEntity> availableBikes = getSpecificAvailableBikes(reservation.getReservationStart(),
+                    reservation.getReservationStop(), bike.getModel(), bike.getSeries());
             bikes.addAll(availableBikes.subList(0, bike.getCount()));
         }
         reservation.setCost(cost);
