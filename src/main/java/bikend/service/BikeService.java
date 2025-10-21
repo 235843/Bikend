@@ -2,6 +2,7 @@ package bikend.service;
 
 import bikend.domain.BikeEntity;
 import bikend.repository.BikeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class BikeService implements IBikeService{
         return null;
     }
 
+    @Transactional
     @Override
     public void addBike(BikeEntity bikeEntity) {
         bikeRepository.save(bikeEntity);

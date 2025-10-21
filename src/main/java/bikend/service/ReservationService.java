@@ -5,12 +5,16 @@ import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import bikend.repository.BikeRepository;
 import bikend.repository.ReservationRepository;
+import bikend.utils.DateHelper;
 import bikend.utils.Mapper;
 import bikend.utils.dtos.BikeDTO;
 import bikend.utils.dtos.BikeListDTO;
 import bikend.utils.dtos.ReservationDTO;
+import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +35,7 @@ public class ReservationService implements IReservationService {
         return reservationRepository.getAllByUser(user).orElse(new ArrayList<>());
     }
 
+    @Transactional
     @Override
     public void createReservation(ReservationDTO reservationDTO, UserEntity user) {
         ReservationEntity reservation = new ReservationEntity();
@@ -85,5 +90,14 @@ public class ReservationService implements IReservationService {
         return allBikes;
     }
 
+    @Transactional
+    @Scheduled(cron = "0 50 16 * * ?", zone = "Europe/Warsaw")
+    public void cancelUnpaidReservations() {
+        System.out.println("Schedule task start");
+        Date from = DateHelper.createDate(0);
+        Date to = DateHelper.createDate(2);
+        reservationRepository.cancelReservations(from, to);
+        System.out.println("Schedule task completed");
+    }
 
 }

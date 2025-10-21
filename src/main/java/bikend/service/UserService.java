@@ -32,12 +32,10 @@ public class UserService implements IUserService{
         return userRepository.findById(id).orElse(null);
     }
 
-    @Transactional
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    @Transactional
     public UserEntity getUserByToken(String token) {
         return userRepository.findByVerificationToken(token).orElse(null);
     }

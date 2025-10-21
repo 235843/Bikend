@@ -15,4 +15,5 @@ public interface IReservationService {
     BikeListDTO getAvailableBikes(Date start, Date end);
     List<BikeEntity> getSpecificAvailableBikes(Date start, Date end, String model, String series);
     void createReservation(ReservationDTO reservationDTO, UserEntity user);
+    void cancelUnpaidReservations();
 }
