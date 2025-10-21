@@ -5,7 +5,9 @@ import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import bikend.repository.BikeRepository;
 import bikend.repository.ReservationRepository;
+import bikend.utils.Mapper;
 import bikend.utils.dtos.BikeDTO;
+import bikend.utils.dtos.BikeListDTO;
 import bikend.utils.dtos.ReservationDTO;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class ReservationService implements IReservationService {
 
     @Override
     public List<ReservationEntity> getUsersReservation(UserEntity user) {
-        return reservationRepository.getAllByUser(user).orElse(null);
+        return reservationRepository.getAllByUser(user).orElse(new ArrayList<>());
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public List<BikeEntity> getAvailableBikes(Date start, Date end) {
+    public BikeListDTO getAvailableBikes(Date start, Date end) {
         List<BikeEntity> allBikes = bikeRepository.findAll();
         List<ReservationEntity> reservations = reservationRepository.findConflictsReservations(start, end).orElse(new ArrayList<>());
         for (ReservationEntity reservation : reservations) {
@@ -66,7 +68,7 @@ public class ReservationService implements IReservationService {
                 allBikes.remove(bike);
             }
         }
-        return allBikes;
+        return Mapper.bikeDTOList(allBikes);
     }
 
     @Override

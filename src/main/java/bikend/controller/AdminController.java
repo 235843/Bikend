@@ -6,6 +6,7 @@ import bikend.service.IUserService;
 import bikend.utils.CodeGenerator;
 import bikend.utils.Mapper;
 import bikend.utils.dtos.AdminUserDTO;
+import bikend.utils.dtos.AdminUserListDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<AdminUserDTO>> getUsers() {
+    public ResponseEntity<AdminUserListDTO> getUsers() {
         return ResponseEntity.ok(Mapper.adminUserDTOList(userService.getUsers()));
     }
 
