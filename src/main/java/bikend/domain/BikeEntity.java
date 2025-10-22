@@ -18,13 +18,16 @@ public class BikeEntity {
     @Enumerated(EnumType.STRING)
     private BikeType type;
     private double pricePerDay;
-    @Column(unique = true)
-    private String uniqueCode;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return uniqueCode.equals(((BikeEntity) o).getUniqueCode());
+        return id == ((BikeEntity) o).getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
     }
 }

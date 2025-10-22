@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ReservationDTO {
-    private List<BikeDTO> bikeList;
+    private List<BikeDTO> bikeDTOList;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date reservationStart;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
@@ -18,4 +18,5 @@ public class ReservationDTO {
     private boolean paid;
     private boolean cancelled;
     private double cost;
+    private String reservationNumber;
 }

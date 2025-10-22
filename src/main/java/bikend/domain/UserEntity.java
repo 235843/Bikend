@@ -28,7 +28,7 @@ public class UserEntity {
     private UserRole role;
     @Column(unique = true)
     private String verificationToken;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ReservationEntity> reservations;
     @ColumnDefault("false")

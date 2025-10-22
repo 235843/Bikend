@@ -1,6 +1,5 @@
 package bikend.repository;
 
-import bikend.domain.BikeEntity;
 import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,9 +30,25 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             "AND r.reservationStart <= :to " +
             "AND r.cancelled = false " +
             "AND r.paid = false ")
-    int cancelReservations(
+    void cancelUnpaidReservations(
             @Param("from") Date from,
             @Param("to") Date to
     );
 
+    @Modifying
+    @Query("UPDATE ReservationEntity r " +
+            "SET r.cancelled = true " +
+            "WHERE r.reservationNumber = :reservationNumber " +
+            "AND r.user = :user ")
+    void cancelReservation(@Param("reservationNumber") String reservationNumber,
+                           @Param("user") UserEntity user);
+
+    @Modifying
+    @Query("UPDATE ReservationEntity r " +
+            "SET r.paid = true " +
+            "WHERE r.reservationNumber = :reservationNumber " +
+            "AND r.user = :user " +
+            "AND r.cancelled = false ")
+    void payForReservation(@Param("reservationNumber") String reservationNumber,
+                           @Param("user") UserEntity user);
 }

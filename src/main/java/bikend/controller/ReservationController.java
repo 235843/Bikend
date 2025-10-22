@@ -33,27 +33,18 @@ public class ReservationController {
     @GetMapping("/availableBikes")
     public ResponseEntity<BikeListDTO> getAvailableBikes(@RequestParam(name = "start") @DateTimeFormat(pattern = "dd.MM.yyyy") Date start,
                                                          @RequestParam(name = "end") @DateTimeFormat(pattern = "dd.MM.yyyy")Date end) {
-        BikeListDTO bikes = new BikeListDTO();
-        try {
-            bikes = reservationService.getAvailableBikes(start, end);
-        } catch (Exception e) {
-            ResponseEntity.status(406).body("Błędne daty");
+        if (start.getTime() > end.getTime()) {
+            ResponseEntity.status(406).body("Wprowadzono niepoprawne daty");
         }
+
+        BikeListDTO bikes = reservationService.getAvailableBikes(start, end);
         return ResponseEntity.ok(bikes);
     }
 
     @PostMapping("/create")
     public ResponseEntity<String> create(Authentication authentication, @RequestBody ReservationDTO reservation) {
         UserEntity user = userService.getUserByEmail(authentication.getName());
-        if (user == null) {
-            return ResponseEntity.status(401).body("Nie znaleziono użytkownika");
-        }
-        try {
-            reservationService.createReservation(reservation, user);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
-
+        reservationService.createReservation(reservation, user);
         return ResponseEntity.ok("Sukces!");
     }
 

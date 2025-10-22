@@ -14,12 +14,12 @@ public class SpringInit extends AbstractAnnotationConfigDispatcherServletInitial
                 SpringWebConfig.class,
                 SecurityConfig.class,
                 HibernatePersistanceConfiguration.class,
-                MailConfiguration.class,
+                MailConfiguration.class
         };
     }
 
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{SpringWebConfig.class, SecurityConfig.class};
+        return new Class[]{SpringWebConfig.class};
     }
 
     protected String[] getServletMappings() {

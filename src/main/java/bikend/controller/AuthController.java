@@ -1,5 +1,6 @@
 package bikend.controller;
 
+import bikend.utils.dtos.LoginDTO;
 import bikend.utils.jwt.JwtUtil;
 import bikend.domain.UserEntity;
 import bikend.service.IUserService;
@@ -40,9 +41,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> data) {
-        UserEntity user = userService.getUserByEmail(data.get("email"));
-        if (user != null && encoder.matches(data.get("password"), user.getPassword())) {
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+        UserEntity user = userService.getUserByEmail(loginDTO.getEmail());
+        if (user != null && encoder.matches(loginDTO.getPassword(), user.getPassword())) {
             if(!user.isActivated()) {
                 return ResponseEntity.status(403).body("Konto nie zostało aktywowane");
             }

@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/editUser")
-    public ResponseEntity<UserDTO> editUser(Authentication authentication,@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> editUser(Authentication authentication, @RequestBody UserDTO userDTO) {
         UserEntity user = userService.getUserByEmail(authentication.getName());
         user.setEmail(userDTO.getEmail());
         user.setFirstName(userDTO.getFirstName());
@@ -44,6 +44,22 @@ public class UserController {
     public ResponseEntity<ReservationListDTO> getReservations(Authentication authentication) {
         List<ReservationEntity> reservations = reservationService.getUsersReservation(userService.getUserByEmail(authentication.getName()));
         return ResponseEntity.ok(Mapper.reservationDTOList(reservations));
+    }
+
+    @PatchMapping(value = "/pay")
+    public ResponseEntity<String> payForReservation(Authentication authentication,
+                                                    @RequestParam(name = "reservationNumber") String reservationNumber) {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        reservationService.payForReservation(user, reservationNumber);
+        return ResponseEntity.ok("Opłacono rezerwację");
+    }
+
+    @PatchMapping(value = "/cancel")
+    public ResponseEntity<String> cancelReservation(Authentication authentication,
+                                                    @RequestParam(name = "reservationNumber") String reservationNumber) {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        reservationService.cancelReservation(user, reservationNumber);
+        return ResponseEntity.ok("Anulowano rezerwację");
     }
 
 }

@@ -17,19 +17,22 @@ public class ReservationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_reservations",
-            joinColumns = @JoinColumn(name = "reservation_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
     private double cost;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "reservation_bikes",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "bike_id")
+    )
     private List<BikeEntity> bikeList;
     private Date reservationStart;
     private Date reservationStop;
     private Date createdAt;
     private Date updatedAt;
+    @Column(unique = true)
+    private String reservationNumber;
     @ColumnDefault("false")
     private boolean paid;
     @ColumnDefault("false")

@@ -7,6 +7,8 @@ import bikend.utils.dtos.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Mapper {
     public static UserDTO userToDTO(UserEntity user) {
@@ -53,12 +55,24 @@ public class Mapper {
     }
 
     public static BikeListDTO bikeDTOList(List<BikeEntity> bikes) {
+        Map<String, Long> counts = bikes.stream()
+                .collect(Collectors.groupingBy(
+                        bike -> bike.getModel() + "|" + bike.getSeries(),
+                        Collectors.counting()
+                ));
+
+        List<BikeDTO> dtos = bikes.stream()
+                .map(bike -> {
+                    BikeDTO dto = bikeToDTO(bike);
+                    String key = bike.getModel() + "|" + bike.getSeries();
+                    dto.setCount(counts.getOrDefault(key, 1L).intValue());
+                    return dto;
+                })
+                .distinct()
+                .collect(Collectors.toList());
+
         BikeListDTO bikeListDTO = new BikeListDTO();
-        List<BikeDTO> dtos = new ArrayList<>();
-        for (BikeEntity bike : bikes) {
-            dtos.add(bikeToDTO(bike));
-        }
-        bikeListDTO.setBikeList(dtos);
+        bikeListDTO.setBikeDTOList(dtos);
         return bikeListDTO;
     }
 
@@ -69,7 +83,8 @@ public class Mapper {
         dto.setCost(reservation.getCost());
         dto.setReservationStop(reservation.getReservationStop());
         dto.setReservationStart(reservation.getReservationStart());
-        dto.setBikeList(bikeDTOList(reservation.getBikeList()).getBikeList());
+        dto.setBikeDTOList(bikeDTOList(reservation.getBikeList()).getBikeDTOList());
+        dto.setReservationNumber(reservation.getReservationNumber());
         return dto;
     }
 

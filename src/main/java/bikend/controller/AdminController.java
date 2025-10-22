@@ -31,7 +31,6 @@ public class AdminController {
     @PostMapping("/addBikes")
     public ResponseEntity<String> addBikes(@RequestBody List<BikeEntity> bikes) {
         for (BikeEntity bike : bikes) {
-            bike.setUniqueCode(CodeGenerator.generateCode(16));
             bikeService.addBike(bike);
         }
         return ResponseEntity.ok("Sukces!");
