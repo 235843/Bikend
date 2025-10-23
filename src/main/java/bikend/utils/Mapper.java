@@ -3,13 +3,12 @@ package bikend.utils;
 import bikend.domain.BikeEntity;
 import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
-import bikend.utils.DTOs.AdminUserDTO;
-import bikend.utils.DTOs.BikeDTO;
-import bikend.utils.DTOs.ReservationDTO;
-import bikend.utils.DTOs.UserDTO;
+import bikend.utils.dtos.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Mapper {
     public static UserDTO userToDTO(UserEntity user) {
@@ -18,7 +17,6 @@ public class Mapper {
         userDTO.setLastName(user.getLastName());
         userDTO.setFirstName(user.getFirstName());
         userDTO.setTelephone(user.getTelephone());
-        userDTO.setPassword("********");
         return userDTO;
     }
 
@@ -28,7 +26,6 @@ public class Mapper {
         adminUserDTO.setLastName(user.getLastName());
         adminUserDTO.setFirstName(user.getFirstName());
         adminUserDTO.setTelephone(user.getTelephone());
-        adminUserDTO.setPassword("********");
         adminUserDTO.setId(user.getId());
         adminUserDTO.setActivated(user.isActivated());
         adminUserDTO.setBlocked(user.isBlocked());
@@ -36,12 +33,14 @@ public class Mapper {
         return adminUserDTO;
     }
 
-    public static List<AdminUserDTO> adminUserDTOList(List<UserEntity> users) {
+    public static AdminUserListDTO adminUserDTOList(List<UserEntity> users) {
+        AdminUserListDTO adminUserListDTO = new AdminUserListDTO();
         List<AdminUserDTO> userDTOS = new ArrayList<>();
         for (UserEntity user: users) {
             userDTOS.add(adminUserDTO(user));
         }
-        return userDTOS;
+        adminUserListDTO.setUserList(userDTOS);
+        return adminUserListDTO;
     }
 
     public static BikeDTO bikeToDTO(BikeEntity bike) {
@@ -55,12 +54,26 @@ public class Mapper {
         return dto;
     }
 
-    public static List<BikeDTO> bikeDTOList(List<BikeEntity> bikes) {
-        List<BikeDTO> dtos = new ArrayList<>();
-        for (BikeEntity bike : bikes) {
-            dtos.add(bikeToDTO(bike));
-        }
-        return dtos;
+    public static BikeListDTO bikeDTOList(List<BikeEntity> bikes) {
+        Map<String, Long> counts = bikes.stream()
+                .collect(Collectors.groupingBy(
+                        bike -> bike.getModel() + "|" + bike.getSeries(),
+                        Collectors.counting()
+                ));
+
+        List<BikeDTO> dtos = bikes.stream()
+                .map(bike -> {
+                    BikeDTO dto = bikeToDTO(bike);
+                    String key = bike.getModel() + "|" + bike.getSeries();
+                    dto.setCount(counts.getOrDefault(key, 1L).intValue());
+                    return dto;
+                })
+                .distinct()
+                .collect(Collectors.toList());
+
+        BikeListDTO bikeListDTO = new BikeListDTO();
+        bikeListDTO.setBikeDTOList(dtos);
+        return bikeListDTO;
     }
 
     public static ReservationDTO reservationToDTO (ReservationEntity reservation) {
@@ -70,15 +83,18 @@ public class Mapper {
         dto.setCost(reservation.getCost());
         dto.setReservationStop(reservation.getReservationStop());
         dto.setReservationStart(reservation.getReservationStart());
-        dto.setBikeList(bikeDTOList(reservation.getBikeList()));
+        dto.setBikeDTOList(bikeDTOList(reservation.getBikeList()).getBikeDTOList());
+        dto.setReservationNumber(reservation.getReservationNumber());
         return dto;
     }
 
-    public static List<ReservationDTO> reservationDTOList(List<ReservationEntity> reservations) {
+    public static ReservationListDTO reservationDTOList(List<ReservationEntity> reservations) {
+        ReservationListDTO reservationListDTO = new ReservationListDTO();
         List<ReservationDTO> dtos = new ArrayList<>();
         for (ReservationEntity reservation : reservations) {
             dtos.add(reservationToDTO(reservation));
         }
-        return dtos;
+        reservationListDTO.setReservationList(dtos);
+        return reservationListDTO;
     }
 }

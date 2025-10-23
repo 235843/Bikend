@@ -1,17 +1,19 @@
 package bikend.controller;
 
 import bikend.domain.BikeEntity;
-import bikend.domain.ReservationEntity;
 import bikend.domain.UserEntity;
 import bikend.service.IBikeService;
 import bikend.service.IReservationService;
 import bikend.service.IUserService;
-import bikend.utils.DTOs.ReservationDTO;
+import bikend.utils.Mapper;
+import bikend.utils.dtos.BikeListDTO;
+import bikend.utils.dtos.ReservationDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,16 +31,22 @@ public class ReservationController {
     }
 
     @GetMapping("/availableBikes")
-    public ResponseEntity<List<BikeEntity>> getAvailableBikes(@RequestParam(name = "start") @DateTimeFormat(pattern = "dd.MM.yyyy") Date start,
-                                                              @RequestParam(name = "end") @DateTimeFormat(pattern = "dd.MM.yyyy")Date end) {
-        return ResponseEntity.ok(reservationService.getAvailableBikes(start, end));
+    public ResponseEntity<BikeListDTO> getAvailableBikes(@RequestParam(name = "start") @DateTimeFormat(pattern = "dd.MM.yyyy") Date start,
+                                                         @RequestParam(name = "end") @DateTimeFormat(pattern = "dd.MM.yyyy")Date end) {
+        if (start.getTime() > end.getTime()) {
+            ResponseEntity.status(406).body("Wprowadzono niepoprawne daty");
+        }
+
+        BikeListDTO bikes = reservationService.getAvailableBikes(start, end);
+        return ResponseEntity.ok(bikes);
     }
 
     @PostMapping("/create")
     public ResponseEntity<String> create(Authentication authentication, @RequestBody ReservationDTO reservation) {
         UserEntity user = userService.getUserByEmail(authentication.getName());
-        reservationService.createReservation(reservation, user);
-
+        if (reservationService.createReservation(reservation, user) == 1) {
+            return ResponseEntity.status(400).body("Nie można dokonać rezerwacji");
+        }
         return ResponseEntity.ok("Sukces!");
     }
 

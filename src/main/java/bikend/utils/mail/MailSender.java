@@ -20,7 +20,7 @@ public class MailSender {
 
     public void sendRentInvoice(String email, ReservationEntity reservation) {
         StringBuilder mess = new StringBuilder("Szanowny kliencie !\r\n");
-        mess.append("W załączniku przesyłamy potwierdzenie zamówienia.\r\n")
+        mess.append("W załączniku przesyłamy potwierdzenie rezerwacji.\r\n")
                 .append("Dziękujemy za wybranie Bikend i widzimy się w przyszły weekend.");
         StringBuilder title = new StringBuilder("Potwierdzenie_rezerwacji_");
         title.append(reservation.getId()).append(".pdf");

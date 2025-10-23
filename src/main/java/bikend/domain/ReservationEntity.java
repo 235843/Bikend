@@ -3,9 +3,12 @@ package bikend.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 import java.util.List;
+
+import static jakarta.persistence.TemporalType.*;
 
 @Entity
 @Setter
@@ -16,19 +19,32 @@ public class ReservationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_reservations",
-            joinColumns = @JoinColumn(name = "reservation_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
     private double cost;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "reservation_bikes",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "bike_id")
+    )
     private List<BikeEntity> bikeList;
     private Date reservationStart;
     private Date reservationStop;
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Date createdAt;
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Date updatedAt;
+    @Column(unique = true)
+    private String reservationNumber;
+    @ColumnDefault("false")
     private boolean paid;
+    @ColumnDefault("false")
     private boolean cancelled;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
 }

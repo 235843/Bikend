@@ -1,4 +1,4 @@
-package bikend.utils.DTOs;
+package bikend.utils.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,5 +10,4 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String telephone;
-    private String password;
 }

@@ -5,7 +5,8 @@ import bikend.service.IBikeService;
 import bikend.service.IUserService;
 import bikend.utils.CodeGenerator;
 import bikend.utils.Mapper;
-import bikend.utils.DTOs.AdminUserDTO;
+import bikend.utils.dtos.AdminUserDTO;
+import bikend.utils.dtos.AdminUserListDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +24,13 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<AdminUserDTO>> getUsers() {
+    public ResponseEntity<AdminUserListDTO> getUsers() {
         return ResponseEntity.ok(Mapper.adminUserDTOList(userService.getUsers()));
     }
 
     @PostMapping("/addBikes")
     public ResponseEntity<String> addBikes(@RequestBody List<BikeEntity> bikes) {
         for (BikeEntity bike : bikes) {
-            bike.setUniqueCode(CodeGenerator.generateCode(16));
             bikeService.addBike(bike);
         }
         return ResponseEntity.ok("Sukces!");

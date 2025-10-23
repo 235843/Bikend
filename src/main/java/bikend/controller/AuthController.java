@@ -1,9 +1,11 @@
 package bikend.controller;
 
+import bikend.utils.dtos.LoginDTO;
 import bikend.utils.jwt.JwtUtil;
 import bikend.domain.UserEntity;
 import bikend.service.IUserService;
 import bikend.utils.mail.MailSender;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,42 +27,42 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody UserEntity user) {
+    public ResponseEntity<String> register(@RequestBody UserEntity user) {
         user.setPassword(encoder.encode(user.getPassword()));
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
         try {
-            String token = UUID.randomUUID().toString();
-            user.setVerificationToken(token);
             userService.addUser(user);
-            mailSender.sendWelcomeMail(user.getEmail(), user.getFirstName(), token);
         } catch (Exception e) {
-            return "User exists!";
+            return ResponseEntity.status(406).body("Użytkownik istnieje");
         }
-        return "Registered!";
+        mailSender.sendWelcomeMail(user.getEmail(), user.getFirstName(), token);
+        return ResponseEntity.ok("Użytkownik zarejestrowany");
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> data) {
-        UserEntity user = userService.getUserByEmail(data.get("email"));
-        if (user != null && encoder.matches(data.get("password"), user.getPassword())) {
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+        UserEntity user = userService.getUserByEmail(loginDTO.getEmail());
+        if (user != null && encoder.matches(loginDTO.getPassword(), user.getPassword())) {
             if(!user.isActivated()) {
-                return Map.of("error", "Konto nie zostało aktywowane");
+                return ResponseEntity.status(403).body("Konto nie zostało aktywowane");
             }
             String token = JwtUtil.generateToken(user.getEmail(), user.getRole().name());
-            return Map.of("token", token);
+            return ResponseEntity.ok(token);
         } else {
-            return Map.of("error", "Błędne dane logowania");
+            return ResponseEntity.status(403).body( "Błędne dane logowania");
         }
     }
 
     @GetMapping("/verify")
-    public String verifyToken(@RequestParam("token") String token) {
+    public ResponseEntity<String> verifyToken(@RequestParam("token") String token) {
         UserEntity user = userService.getUserByToken(token);
         if (user == null) {
-            return "Błędny token";
+            return ResponseEntity.status(404).body("Błędny token");
         }
         user.setActivated(true);
         userService.editUser(user);
-        return "Sukces!";
+        return ResponseEntity.ok("Sukces");
     }
 
 }
