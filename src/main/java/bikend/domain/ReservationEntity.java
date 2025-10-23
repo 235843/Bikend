@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 import java.util.Date;
 import java.util.List;
 
+import static jakarta.persistence.TemporalType.*;
+
 @Entity
 @Setter
 @Getter
@@ -29,7 +31,9 @@ public class ReservationEntity {
     private List<BikeEntity> bikeList;
     private Date reservationStart;
     private Date reservationStop;
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Date createdAt;
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Date updatedAt;
     @Column(unique = true)
     private String reservationNumber;
@@ -37,4 +41,10 @@ public class ReservationEntity {
     private boolean paid;
     @ColumnDefault("false")
     private boolean cancelled;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
 }

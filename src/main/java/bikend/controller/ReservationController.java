@@ -44,7 +44,9 @@ public class ReservationController {
     @PostMapping("/create")
     public ResponseEntity<String> create(Authentication authentication, @RequestBody ReservationDTO reservation) {
         UserEntity user = userService.getUserByEmail(authentication.getName());
-        reservationService.createReservation(reservation, user);
+        if (reservationService.createReservation(reservation, user) == 1) {
+            return ResponseEntity.status(400).body("Nie można dokonać rezerwacji");
+        }
         return ResponseEntity.ok("Sukces!");
     }
 

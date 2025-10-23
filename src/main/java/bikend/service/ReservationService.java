@@ -44,11 +44,9 @@ public class ReservationService implements IReservationService {
 
     @Transactional
     @Override
-    public void createReservation(ReservationDTO reservationDTO, UserEntity user) {
+    public int createReservation(ReservationDTO reservationDTO, UserEntity user) {
         ReservationEntity reservation = new ReservationEntity();
         reservation.setUser(user);
-        reservation.setCreatedAt(new Date());
-        reservation.setUpdatedAt(new Date());
         reservation.setReservationStart(reservationDTO.getReservationStart());
         reservation.setReservationStop(reservationDTO.getReservationStop());
         reservation.setReservationNumber(CodeGenerator.generateCode(24));
@@ -62,12 +60,16 @@ public class ReservationService implements IReservationService {
             cost += bike.getPricePerDay() * days * bike.getCount();
             List<BikeEntity> availableBikes = getSpecificAvailableBikes(reservation.getReservationStart(),
                     reservation.getReservationStop(), bike.getModel(), bike.getSeries());
+            if (availableBikes.size() < bike.getCount()) {
+                return 1;
+            }
             bikes.addAll(availableBikes.subList(0, bike.getCount()));
         }
         reservation.setCost(cost);
         reservation.setBikeList(bikes);
 
         reservationRepository.save(reservation);
+        return 0;
     }
 
     @Override

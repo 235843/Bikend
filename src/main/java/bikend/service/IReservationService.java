@@ -13,7 +13,7 @@ public interface IReservationService {
     List<ReservationEntity> getUsersReservation(UserEntity user);
     BikeListDTO getAvailableBikes(Date start, Date end);
     List<BikeEntity> getSpecificAvailableBikes(Date start, Date end, String model, String series);
-    void createReservation(ReservationDTO reservationDTO, UserEntity user);
+    int createReservation(ReservationDTO reservationDTO, UserEntity user);
     void cancelUnpaidReservations();
     void cancelReservation(UserEntity user, String reservationCode);
     void payForReservation(UserEntity user, String reservationCode);
