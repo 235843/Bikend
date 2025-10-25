@@ -15,6 +15,7 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
     Optional<List<ReservationEntity>> getAllByUser(UserEntity user);
+    Optional<ReservationEntity> getByReservationNumber(String reservationNumber);
     @Query("SELECT r FROM ReservationEntity r " +
             "WHERE r.reservationStart <= :endDate " +
             "AND r.reservationStop >= :startDate")

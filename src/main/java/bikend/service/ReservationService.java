@@ -11,6 +11,7 @@ import bikend.utils.Mapper;
 import bikend.utils.dtos.BikeDTO;
 import bikend.utils.dtos.BikeListDTO;
 import bikend.utils.dtos.ReservationDTO;
+import bikend.utils.mail.MailSender;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,16 +20,17 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
     private final BikeRepository bikeRepository;
+    private final MailSender mailSender;
 
-    public ReservationService(ReservationRepository reservationRepository, BikeRepository bikeRepository) {
+    public ReservationService(ReservationRepository reservationRepository, BikeRepository bikeRepository, MailSender mailSender) {
         this.reservationRepository = reservationRepository;
         this.bikeRepository = bikeRepository;
+        this.mailSender = mailSender;
     }
 
     @PostConstruct
@@ -39,8 +41,6 @@ public class ReservationService implements IReservationService {
     public List<ReservationEntity> getUsersReservation(UserEntity user) {
         return reservationRepository.getAllByUser(user).orElse(new ArrayList<>());
     }
-
-
 
     @Transactional
     @Override
@@ -53,8 +53,7 @@ public class ReservationService implements IReservationService {
 
         List<BikeEntity> bikes = new ArrayList<>();
         double cost = 0;
-        long days = TimeUnit.DAYS.convert(reservation.getReservationStop().getTime()
-                - reservation.getReservationStart().getTime(), TimeUnit.MILLISECONDS) + 1;
+        long days = DateHelper.getDays(reservation.getReservationStart(), reservation.getReservationStop());
 
         for (BikeDTO bike : reservationDTO.getBikeDTOList()) {
             cost += bike.getPricePerDay() * days * bike.getCount();
@@ -121,6 +120,10 @@ public class ReservationService implements IReservationService {
     @Override
     public void payForReservation(UserEntity user, String reservationCode) {
         reservationRepository.payForReservation(reservationCode, user);
+        ReservationEntity reservation = reservationRepository.getByReservationNumber(reservationCode).orElse(null);
+        if (reservation == null) {
+            return;
+        }
+        mailSender.sendRentInvoice(user.getEmail(), Mapper.reservationToDTO(reservation));
     }
-
 }

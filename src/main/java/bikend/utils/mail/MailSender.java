@@ -1,6 +1,7 @@
 package bikend.utils.mail;
 
 import bikend.domain.ReservationEntity;
+import bikend.utils.dtos.ReservationDTO;
 import bikend.utils.pdf.PdfGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,12 +19,12 @@ public class MailSender {
     private final JavaMailSender mailSender;
     private final String HOST_EMAIL = "bikend165@gmail.com";
 
-    public void sendRentInvoice(String email, ReservationEntity reservation) {
+    public void sendRentInvoice(String email, ReservationDTO reservation) {
         StringBuilder mess = new StringBuilder("Szanowny kliencie !\r\n");
         mess.append("W załączniku przesyłamy potwierdzenie rezerwacji.\r\n")
                 .append("Dziękujemy za wybranie Bikend i widzimy się w przyszły weekend.");
         StringBuilder title = new StringBuilder("Potwierdzenie_rezerwacji_");
-        title.append(reservation.getId()).append(".pdf");
+        title.append(reservation.getReservationNumber()).append(".pdf");
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,true);

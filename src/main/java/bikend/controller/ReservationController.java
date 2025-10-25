@@ -9,6 +9,7 @@ import bikend.utils.Mapper;
 import bikend.utils.dtos.BikeListDTO;
 import bikend.utils.dtos.ReservationDTO;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class ReservationController {
     public ResponseEntity<BikeListDTO> getAvailableBikes(@RequestParam(name = "start") @DateTimeFormat(pattern = "dd.MM.yyyy") Date start,
                                                          @RequestParam(name = "end") @DateTimeFormat(pattern = "dd.MM.yyyy")Date end) {
         if (start.getTime() > end.getTime()) {
-            ResponseEntity.status(406).body("Wprowadzono niepoprawne daty");
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wprowadzono niepoprawne daty");
         }
 
         BikeListDTO bikes = reservationService.getAvailableBikes(start, end);
@@ -45,7 +46,7 @@ public class ReservationController {
     public ResponseEntity<String> create(Authentication authentication, @RequestBody ReservationDTO reservation) {
         UserEntity user = userService.getUserByEmail(authentication.getName());
         if (reservationService.createReservation(reservation, user) == 1) {
-            return ResponseEntity.status(400).body("Nie można dokonać rezerwacji");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nie można dokonać rezerwacji");
         }
         return ResponseEntity.ok("Sukces!");
     }

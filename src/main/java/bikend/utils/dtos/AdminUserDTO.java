@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdminUserDTO extends UserDTO{
-    private UserRole role;
     private long id;
     private boolean blocked;
     private boolean activated;

@@ -19,7 +19,7 @@ public class SpringInit extends AbstractAnnotationConfigDispatcherServletInitial
     }
 
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{SpringWebConfig.class};
+        return new Class[0];
     }
 
     protected String[] getServletMappings() {

@@ -1,4 +1,4 @@
-package bikend.configuration.security;
+package bikend.configuration.security.service;
 
 import bikend.domain.UserEntity;
 import bikend.repository.UserRepository;
@@ -21,7 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Nie znaleziono użytkownika");
         }
-
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())

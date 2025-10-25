@@ -20,17 +20,7 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-    public static Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
 
-    public static String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
     public static String validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()

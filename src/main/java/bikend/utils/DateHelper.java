@@ -2,6 +2,7 @@ package bikend.utils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class DateHelper {
     public static Date createDate(int daysToAdd) {
@@ -12,5 +13,10 @@ public class DateHelper {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
+    }
+
+    public static long getDays(Date start, Date end) {
+        return TimeUnit.DAYS.convert(end.getTime()
+                - start.getTime(), TimeUnit.MILLISECONDS) + 1;
     }
 }

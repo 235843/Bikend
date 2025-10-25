@@ -1,5 +1,6 @@
 package bikend.configuration.security;
 
+import bikend.configuration.security.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,6 @@ public class SecurityConfig {
         this.service = service;
         this.filter = filter;
     }
-
 
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity httpSecurity) throws Exception{

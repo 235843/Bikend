@@ -5,6 +5,7 @@ import bikend.utils.jwt.JwtUtil;
 import bikend.domain.UserEntity;
 import bikend.service.IUserService;
 import bikend.utils.mail.MailSender;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -45,12 +46,12 @@ public class AuthController {
         UserEntity user = userService.getUserByEmail(loginDTO.getEmail());
         if (user != null && encoder.matches(loginDTO.getPassword(), user.getPassword())) {
             if(!user.isActivated()) {
-                return ResponseEntity.status(403).body("Konto nie zostało aktywowane");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Konto nie zostało aktywowane");
             }
             String token = JwtUtil.generateToken(user.getEmail(), user.getRole().name());
             return ResponseEntity.ok(token);
         } else {
-            return ResponseEntity.status(403).body( "Błędne dane logowania");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body( "Błędne dane logowania");
         }
     }
 
@@ -58,7 +59,7 @@ public class AuthController {
     public ResponseEntity<String> verifyToken(@RequestParam("token") String token) {
         UserEntity user = userService.getUserByToken(token);
         if (user == null) {
-            return ResponseEntity.status(404).body("Błędny token");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Błędny token");
         }
         user.setActivated(true);
         userService.editUser(user);

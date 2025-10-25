@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EnableJpaRepositories(basePackages = {"bikend"})
+@EnableJpaRepositories(basePackages = {"bikend.repository"})
 @EnableTransactionManagement
 public class HibernatePersistanceConfiguration {
 
