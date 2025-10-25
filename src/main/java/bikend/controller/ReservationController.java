@@ -50,5 +50,19 @@ public class ReservationController {
         }
         return ResponseEntity.ok("Sukces!");
     }
+    @PatchMapping(value = "/pay")
+    public ResponseEntity<String> payForReservation(Authentication authentication,
+                                                    @RequestParam(name = "reservationNumber") String reservationNumber) {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        reservationService.payForReservation(user, reservationNumber);
+        return ResponseEntity.ok("Opłacono rezerwację");
+    }
 
+    @PatchMapping(value = "/cancel")
+    public ResponseEntity<String> cancelReservation(Authentication authentication,
+                                                    @RequestParam(name = "reservationNumber") String reservationNumber) {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        reservationService.cancelReservation(user, reservationNumber);
+        return ResponseEntity.ok("Anulowano rezerwację");
+    }
 }

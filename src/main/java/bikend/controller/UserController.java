@@ -6,12 +6,14 @@ import bikend.domain.UserEntity;
 import bikend.service.IReservationService;
 import bikend.service.IUserService;
 import bikend.utils.Mapper;
+import bikend.utils.dtos.LoginDTO;
 import bikend.utils.dtos.ReservationListDTO;
 import bikend.utils.dtos.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,10 +24,13 @@ public class UserController {
     private final IUserService userService;
     private final IReservationService reservationService;
     private final JwtBlacklistService jwtBlacklistService;
-    public UserController (IUserService userService, IReservationService reservationService, JwtBlacklistService jwtBlacklistService) {
+    private final PasswordEncoder encoder;
+    public UserController (IUserService userService, IReservationService reservationService,
+                           JwtBlacklistService jwtBlacklistService, PasswordEncoder encoder) {
         this.userService = userService;
         this.reservationService = reservationService;
         this.jwtBlacklistService = jwtBlacklistService;
+        this.encoder = encoder;
     }
 
     @GetMapping(value = "/userInfo")
@@ -42,6 +47,14 @@ public class UserController {
         user.setTelephone(userDTO.getTelephone());
         userService.editUser(user);
         return ResponseEntity.ok(userDTO);
+    }
+
+    @PatchMapping(value = "/changePassword")
+    public ResponseEntity<UserDTO> changePassword(Authentication authentication, @RequestBody LoginDTO loginDTO) {
+        UserEntity user = userService.getUserByEmail(authentication.getName());
+        user.setPassword(encoder.encode(loginDTO.getPassword()));
+        userService.editUser(user);
+        return ResponseEntity.ok(Mapper.userToDTO(user));
     }
 
     @GetMapping(value = "/reservations")
@@ -61,22 +74,5 @@ public class UserController {
 
         return ResponseEntity.ok("Wylogowano");
     }
-
-    @PatchMapping(value = "/pay")
-    public ResponseEntity<String> payForReservation(Authentication authentication,
-                                                    @RequestParam(name = "reservationNumber") String reservationNumber) {
-        UserEntity user = userService.getUserByEmail(authentication.getName());
-        reservationService.payForReservation(user, reservationNumber);
-        return ResponseEntity.ok("Opłacono rezerwację");
-    }
-
-    @PatchMapping(value = "/cancel")
-    public ResponseEntity<String> cancelReservation(Authentication authentication,
-                                                    @RequestParam(name = "reservationNumber") String reservationNumber) {
-        UserEntity user = userService.getUserByEmail(authentication.getName());
-        reservationService.cancelReservation(user, reservationNumber);
-        return ResponseEntity.ok("Anulowano rezerwację");
-    }
-
 }
 
